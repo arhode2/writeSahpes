@@ -41,7 +41,7 @@ public class Rectangle extends Shape {
      * This function, and all of my fill functions will begin in the bottom left corner of the shape.
      */
     public String fillOutToIn() {
-        String gCode = "G01 " + "Z" + String.format("%.6f", getSafeZ()) + "F" + String.format("%.6f", Control.zSpeed) + "\n";
+        String gCode = "G01 " + "Z" + String.format("%.6f", getSafeZ()) + " F" + String.format("%.2f", Control.zSpeed) + "\n";
         double nBase = getBase() - getTip();
         double nHeight = getHeight() - getTip();
         while (nBase > 0 && nHeight > 0) {
@@ -58,14 +58,15 @@ public class Rectangle extends Shape {
         }
         gCode = gCode.concat(Control.moveOut(getSafeZ()));
         String[] gCodeArray = gCode.split("\n");
+        boolean lastMoveZ = true;
         for (int i = 1; i < gCodeArray.length; i++) {
-            if (gCodeArray[i - 1].contains(String.format("%.2f", Control.zSpeed))
-                    && gCodeArray[i].contains(String.format("%.2f", Control.zSpeed))) {
-                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.2f", Control.zSpeed), "");
+            if (!lastMoveZ) {
+                gCodeArray[i] = gCodeArray[i].replace("F1.00", "");
             }
-            if (gCodeArray[i - 1].contains(String.format("%.2f", Control.speed))
-                    && gCodeArray[i].contains(String.format("%.2f", Control.speed))) {
-                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.2f", Control.speed), "");
+            if (gCodeArray[i].contains("Z")) {
+                lastMoveZ = true;
+            } else {
+                lastMoveZ = false;
             }
         }
         gCode = "";
