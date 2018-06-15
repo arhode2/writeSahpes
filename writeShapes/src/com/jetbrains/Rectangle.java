@@ -2,6 +2,14 @@ package com.jetbrains;
 
 public class Rectangle extends Shape {
 
+    /**
+     * Total Constructor for the class.
+     * @param newBase horizontal distance
+     * @param newHeight vertical distance
+     * @param newTip tip size
+     * @param newTipScalar scalar for getting nicer lines
+     * @param newSafeZ safe z distance for when you are not printing
+     */
     Rectangle(final double newBase, final double newHeight, final double newTip, final double newTipScalar,
               final double newSafeZ) {
         this.setBase(newBase);
@@ -30,16 +38,12 @@ public class Rectangle extends Shape {
      * A function that prints the gcode for a rectangle of the given parameters.
      * Units must be in mm for Ejet.
      * Draws outline then draws smaller outlines until it reaches the center.
+     * This function, and all of my fill functions will begin in the bottom left corner of the shape.
      */
     public String fillOutToIn() {
         String gCode = "";
         double nBase = getBase() - getTip();
         double nHeight = getHeight() - getTip();
-        System.out.println("Length is: " + getBase() + "mm");
-        System.out.println("Width is: " + getHeight() + "mm");
-        System.out.println("Tip is: " + getTip() + "mm");
-        System.out.println("tipScalar is: " + getTipScalar());
-        System.out.println("safe Z distance to move is: " + getSafeZ());
         while (nBase > 0 && nHeight > 0) {
             gCode = gCode.concat(Control.moveRight(nBase));
             gCode = gCode.concat(Control.moveUp(nHeight));
@@ -55,10 +59,23 @@ public class Rectangle extends Shape {
         gCode = gCode.concat(Control.moveOut(getSafeZ()));
         return gCode;
     }
-    public static void rectInToOut(final double base, final double height, final double tip,
-                                   final double tipScalar, final double safeZ) {
+    public String fillInToOut() {
+        String gCode = "";
+        gCode = gCode.concat(center());
+        gCode = gCode.concat(Control.moveIn(getSafeZ()));
+        gCode = gCode.concat(Control.moveOut(getSafeZ()));
+        gCode = gCode.concat(Control.moveLeft(getTip()));
+        gCode = gCode.concat(Control.moveDown(getTip()));
+        gCode = gCode.concat(Control.moveIn(getSafeZ()));
+        double currentDistHo = getTip() * (getBase() / getHeight());
+        double currentDistVert = getTip() * (getHeight() / getBase());
 
+        return gCode;
     }
-    public static void rectCenter(final double base, final double height) {
+    public String center() {
+        String centerCode = "";
+        centerCode = centerCode.concat(Control.moveRight(getBase() / 2));
+        centerCode = centerCode.concat(Control.moveUp(getHeight() / 2));
+        return centerCode;
     }
 }
