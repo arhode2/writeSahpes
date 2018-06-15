@@ -41,7 +41,7 @@ public class Rectangle extends Shape {
      * This function, and all of my fill functions will begin in the bottom left corner of the shape.
      */
     public String fillOutToIn() {
-        String gCode = "";
+        String gCode = "G01 " + "Z" + String.format("%.6f", getSafeZ()) + "\n";
         double nBase = getBase() - getTip();
         double nHeight = getHeight() - getTip();
         while (nBase > 0 && nHeight > 0) {
