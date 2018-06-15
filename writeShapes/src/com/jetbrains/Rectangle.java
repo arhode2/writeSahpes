@@ -57,6 +57,21 @@ public class Rectangle extends Shape {
             nHeight -= getTip() * getTipScalar();
         }
         gCode = gCode.concat(Control.moveOut(getSafeZ()));
+        String[] gCodeArray = gCode.split("\n");
+        for (int i = 1; i < gCodeArray.length; i++) {
+            if (gCodeArray[i - 1].contains(String.format("%.2f", Control.zSpeed))
+                    && gCodeArray[i].contains(String.format("%.2f", Control.zSpeed))) {
+                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.2f", Control.zSpeed), "");
+            }
+            if (gCodeArray[i - 1].contains(String.format("%.2f", Control.speed))
+                    && gCodeArray[i].contains(String.format("%.2f", Control.speed))) {
+                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.2f", Control.speed), "");
+            }
+        }
+        gCode = "";
+        for (int i = 0; i < gCodeArray.length; i++) {
+            gCode = gCode.concat(gCodeArray[i] + "\n");
+        }
         return gCode;
     }
     public String fillInToOut() {
