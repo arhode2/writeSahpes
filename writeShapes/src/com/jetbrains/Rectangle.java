@@ -57,22 +57,7 @@ public class Rectangle extends Shape {
             nHeight -= getTip() * getTipScalar();
         }
         gCode = gCode.concat(Control.moveOut(getSafeZ()));
-        String[] gCodeArray = gCode.split("\n");
-        boolean lastMoveZ = true;
-        for (int i = 1; i < gCodeArray.length; i++) {
-            if (!lastMoveZ) {
-                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.6f", Control.speed), "");
-            }
-            if (gCodeArray[i].contains("Z")) {
-                lastMoveZ = true;
-            } else {
-                lastMoveZ = false;
-            }
-        }
-        gCode = "";
-        for (int i = 0; i < gCodeArray.length; i++) {
-            gCode = gCode.concat(gCodeArray[i] + "\n");
-        }
+        gCode = cleanSpeeds(gCode);
         return gCode;
     }
     public String fillInToOut() {
@@ -93,5 +78,29 @@ public class Rectangle extends Shape {
         centerCode = centerCode.concat(Control.moveRight(getBase() / 2));
         centerCode = centerCode.concat(Control.moveUp(getHeight() / 2));
         return centerCode;
+    }
+    public String cleanSpeeds(final String inputgCode) {
+        String[] gCodeArray = inputgCode.split("\n");
+        boolean lastMoveZ = true;
+        for (int i = 1; i < gCodeArray.length; i++) {
+            if (!lastMoveZ) {
+                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.6f", Control.speed), "");
+            } else {
+                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.6f", Control.zSpeed), "");
+            }
+            if (gCodeArray[i].contains("Z")) {
+                lastMoveZ = true;
+            } else {
+                lastMoveZ = false;
+            }
+        }
+        String newgCode = "";
+        for (int i = 0; i < gCodeArray.length; i++) {
+            newgCode = newgCode.concat(gCodeArray[i] + "\n");
+        }
+        return newgCode;
+    }
+    public String drawBox(final double ho, final double vert) {
+
     }
 }
