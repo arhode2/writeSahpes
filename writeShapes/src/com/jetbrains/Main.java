@@ -3,7 +3,7 @@ package com.jetbrains;
 public class Main {
     public static void main(String[] args) {
 
-        Rectangle rect = new Rectangle(0.3, 0.3, 0.005, 0.9, 0.07);
-        System.out.println(rect.fillOutToIn());
+        Rectangle rect = new Rectangle(0.3, 0.3, 0.005, 0.6, 0.07);
+        System.out.println(rect.fillInToOut());
     }
 }
