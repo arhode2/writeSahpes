@@ -42,7 +42,7 @@ public class Rectangle extends Shape {
      * This function, and all of my fill functions will begin in the bottom left corner of the shape.
      */
     public String fillOutToIn() {
-        String gCode = Shape.INITIALIZE;
+        String gCode = "";
         double nBase = getBase() - getTip();
         double nHeight = getHeight() - getTip();
         while (nBase > 0 && nHeight > 0) {
@@ -54,12 +54,11 @@ public class Rectangle extends Shape {
         }
         gCode = gCode.concat(Control.moveOut(getSafeZ()));
         gCode = cleanSpeeds(gCode);
-        gCode = gCode.concat(Shape.END);
         return gCode;
     }
 
     public String fillInToOut() {
-        String gCode = Shape.INITIALIZE;
+        String gCode = "";
         //I know it doesn't make sense to declare a base or height smaller than the tip width,
         //But I think overfilling in the middle is ok, and it's worth it to preserve the base to height ratio in the
         //first few boxes.
@@ -70,16 +69,16 @@ public class Rectangle extends Shape {
             gCode = drawBox(gCode, nBase, nHeight);
             gCode = gCode.concat(Control.moveLeft(getTip() * getTipScalar()));
             gCode = gCode.concat(Control.moveDown(getTip() * getTipScalar()));
-            nBase += 2 * (getBase() / getHeight()) * (getTip() * getTipScalar());
-            nHeight += 2 * (getHeight() / getBase()) * (getTip() * getTipScalar());
+            nBase += (getBase() / getHeight()) * (2 * (getTip() * getTipScalar()));
+            nHeight += 2 * (getTip() * getTipScalar());
         }
+        //I think the problem was having the ratio in both nBase and nHeight.
         gCode = cleanSpeeds(gCode);
-        gCode = gCode.concat(Shape.END);
         return gCode;
     }
 
     public String fillIntegral() {
-        String gCode = Shape.INITIALIZE;
+        String gCode = "";
         double smallWidth = getBase() - (2 * (getTip() * getTipScalar()));
         gCode = drawBox(gCode, getBase(), getHeight());
         gCode = gCode.concat(Control.moveRight(getTip() * getTipScalar()));
@@ -92,7 +91,6 @@ public class Rectangle extends Shape {
             gCode = gCode.concat(Control.moveLeft(smallWidth));
         }
         gCode = cleanSpeeds(gCode);
-        gCode = gCode.concat(Shape.END);
         return gCode;
     }
 
@@ -139,6 +137,18 @@ public class Rectangle extends Shape {
         inputgCode = inputgCode.concat(Control.moveDown(vert));
         inputgCode = inputgCode.concat(Control.moveOut(getSafeZ()));
         return inputgCode;
+    }
 
+    public String drawArray(final int hoNum, final int vertNum, final double separation) {
+        String gCode = Shape.INITIALIZE;
+        for (int i = 0; i < vertNum; i++) {
+            for (int j = 0; j < hoNum; j++) {
+                 gCode = gCode.concat(fillInToOut());
+                 gCode = gCode.concat(Control.moveRight(getBase() + separation));
+            }
+            gCode = gCode.concat(Control.moveLeft(2 * (separation + getBase())));
+            gCode = gCode.concat(Control.moveUp(separation));
+        }
+        return "";
     }
 }

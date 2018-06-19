@@ -2,7 +2,7 @@ package com.jetbrains;
 
 public class Control {
 
-    public static final double speed = 0.9;
+    public static final double speed = 1.0;
     public static final double zSpeed = 3.0;
 
     public static String moveIn(final double distance) {
