@@ -1,21 +1,24 @@
 package com.jetbrains;
 
 public class Rectangle extends Shape {
-
     /**
-     * Total Constructor for the class.
-     * @param newBase horizontal distance
-     * @param newHeight vertical distance
-     * @param newTip tip size
-     * @param newTipScalar scalar for getting nicer lines
-     * @param newSafeZ safe z distance for when you are not printing
+     * Total constructor for a rectangle
+     * @param newBase horizontal dimension
+     * @param newHeight vertical dimension
+     * @param newTip tip diameter
+     * @param newTipScalar scalar
+     * @param newSpeed speed for X and Y movements
+     * @param newzSpeed speed for Z movements
+     * @param newSafeZ height above the printing height for non-printing movements.
      */
     Rectangle(final double newBase, final double newHeight, final double newTip, final double newTipScalar,
-              final double newSafeZ) {
+              final double newSpeed, final double newzSpeed, final double newSafeZ) {
         this.setBase(newBase);
         this.setHeight(newHeight);
         this.setTip(newTip);
         this.setTipScalar(newTipScalar);
+        this.setSpeed(newSpeed);
+        this.setzSpeed(newzSpeed);
         this.setSafeZ(newSafeZ);
     }
 
@@ -47,12 +50,12 @@ public class Rectangle extends Shape {
         double nHeight = getHeight() - getTip();
         while (nBase > 0 && nHeight > 0) {
             gCode = drawBox(gCode, nBase, nHeight);
-            gCode = gCode.concat(Control.moveRight(getTip() * getTipScalar()));
-            gCode = gCode.concat(Control.moveUp(getTip() * getTipScalar()));
+            gCode = gCode.concat(moveRight(getTip() * getTipScalar()));
+            gCode = gCode.concat(moveUp(getTip() * getTipScalar()));
             nBase -= 2 * getTip() * getTipScalar();
             nHeight -= 2 * getTip() * getTipScalar();
         }
-        gCode = gCode.concat(Control.moveOut(getSafeZ()));
+        gCode = gCode.concat(moveOut(getSafeZ()));
         gCode = cleanSpeeds(gCode);
         return gCode;
     }
@@ -67,8 +70,8 @@ public class Rectangle extends Shape {
         gCode = gCode.concat(center());
         while (nBase < getBase() && nHeight < getHeight()) {
             gCode = drawBox(gCode, nBase, nHeight);
-            gCode = gCode.concat(Control.moveLeft(getTip() * getTipScalar()));
-            gCode = gCode.concat(Control.moveDown(getTip() * getTipScalar()));
+            gCode = gCode.concat(moveLeft(getTip() * getTipScalar()));
+            gCode = gCode.concat(moveDown(getTip() * getTipScalar()));
             nBase += (getBase() / getHeight()) * (2 * (getTip() * getTipScalar()));
             nHeight += 2 * (getTip() * getTipScalar());
         }
@@ -81,14 +84,14 @@ public class Rectangle extends Shape {
         String gCode = "";
         double smallWidth = getBase() - (2 * (getTip() * getTipScalar()));
         gCode = drawBox(gCode, getBase(), getHeight());
-        gCode = gCode.concat(Control.moveRight(getTip() * getTipScalar()));
-        gCode = gCode.concat(Control.moveUp(getTip() * getTipScalar()));
+        gCode = gCode.concat(moveRight(getTip() * getTipScalar()));
+        gCode = gCode.concat(moveUp(getTip() * getTipScalar()));
         for (double i = getTip() * getTipScalar(); i < getHeight(); i += getTip() * getTipScalar()) {
-            gCode = gCode.concat(Control.moveIn(getSafeZ()));
-            gCode = gCode.concat(Control.moveRight(smallWidth));
-            gCode = gCode.concat(Control.moveOut(getSafeZ()));
-            gCode = gCode.concat(Control.moveUp(getTip() * getTipScalar()));
-            gCode = gCode.concat(Control.moveLeft(smallWidth));
+            gCode = gCode.concat(moveIn(getSafeZ()));
+            gCode = gCode.concat(moveRight(smallWidth));
+            gCode = gCode.concat(moveOut(getSafeZ()));
+            gCode = gCode.concat(moveUp(getTip() * getTipScalar()));
+            gCode = gCode.concat(moveLeft(smallWidth));
         }
         gCode = cleanSpeeds(gCode);
         return gCode;
@@ -104,18 +107,24 @@ public class Rectangle extends Shape {
 
     public String center() {
         String centerCode = "";
-        centerCode = centerCode.concat(Control.moveRight(getBase() / 2));
-        centerCode = centerCode.concat(Control.moveUp(getHeight() / 2));
+        centerCode = centerCode.concat(moveRight(getBase() / 2));
+        centerCode = centerCode.concat(moveUp(getHeight() / 2));
         return centerCode;
     }
+
+    /**
+     * Removes redundant F######## from gCode to avoid CNC compile errors.
+     * @param inputgCode your current gCode string to clean
+     * @return a cleaned gCode string.
+     */
     public String cleanSpeeds(final String inputgCode) {
         String[] gCodeArray = inputgCode.split("\n");
-        boolean lastMoveZ = true;
+        boolean lastMoveZ = gCodeArray[0].contains("Z");
         for (int i = 1; i < gCodeArray.length; i++) {
             if (!lastMoveZ) {
-                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.6f", Control.speed), "");
+                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.6f", getSpeed()), "");
             } else {
-                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.6f", Control.zSpeed), "");
+                gCodeArray[i] = gCodeArray[i].replace("F" + String.format("%.6f", getzSpeed()), "");
             }
             if (gCodeArray[i].contains("Z")) {
                 lastMoveZ = true;
@@ -130,12 +139,12 @@ public class Rectangle extends Shape {
         return newgCode;
     }
     public String drawBox(String inputgCode, final double ho, final double vert) {
-        inputgCode = inputgCode.concat(Control.moveIn(getSafeZ()));
-        inputgCode = inputgCode.concat(Control.moveRight(ho));
-        inputgCode = inputgCode.concat(Control.moveUp(vert));
-        inputgCode = inputgCode.concat(Control.moveLeft(ho));
-        inputgCode = inputgCode.concat(Control.moveDown(vert));
-        inputgCode = inputgCode.concat(Control.moveOut(getSafeZ()));
+        inputgCode = inputgCode.concat(moveIn(getSafeZ()));
+        inputgCode = inputgCode.concat(moveRight(ho));
+        inputgCode = inputgCode.concat(moveUp(vert));
+        inputgCode = inputgCode.concat(moveLeft(ho));
+        inputgCode = inputgCode.concat(moveDown(vert));
+        inputgCode = inputgCode.concat(moveOut(getSafeZ()));
         return inputgCode;
     }
 
@@ -144,10 +153,10 @@ public class Rectangle extends Shape {
         for (int i = 0; i < vertNum; i++) {
             for (int j = 0; j < hoNum; j++) {
                  gCode = gCode.concat(fillInToOut());
-                 gCode = gCode.concat(Control.moveRight(getBase() + separation));
+                 gCode = gCode.concat(moveRight(getBase() + separation));
             }
-            gCode = gCode.concat(Control.moveLeft(2 * (separation + getBase())));
-            gCode = gCode.concat(Control.moveUp(separation));
+            gCode = gCode.concat(moveLeft(2 * (separation + getBase())));
+            gCode = gCode.concat(moveUp(separation));
         }
         return "";
     }
