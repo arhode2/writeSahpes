@@ -149,7 +149,7 @@ public class Rectangle extends Shape {
     }
 
     public String drawArray(final int hoNum, final int vertNum, final double separation) {
-        String gCode = Shape.INITIALIZE;
+        String gCode = "";
         for (int i = 0; i < vertNum; i++) {
             for (int j = 0; j < hoNum; j++) {
                  gCode = gCode.concat(fillInToOut());
@@ -159,5 +159,9 @@ public class Rectangle extends Shape {
             gCode = gCode.concat(moveUp(separation));
         }
         return "";
+    }
+    public String toTestCode(String inputFill) {
+        String testCode = "";
+        return testCode;
     }
 }
