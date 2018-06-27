@@ -160,8 +160,26 @@ public class Rectangle extends Shape {
         }
         return "";
     }
+
+    /**
+     * Function makes gCode 10x larger so it can be tested in CAMotics.
+     * @param inputFill the gCode that you want to test
+     * @return an upscaled version of the gCode that can be seen in CAMotics
+     */
     public String toTestCode(String inputFill) {
-        String testCode = "";
+        String testCode = "G91";
+        String[] gArray = inputFill.split("\n");
+        String[][] g2Array = new String[gArray.length][];
+        for (int i = 0; i < gArray.length; i++) {
+            g2Array[i] = gArray[i].split(" ");
+        }
+        for (int i = 0; i < g2Array.length; i++) {
+            for (int j = 0; j < g2Array[i].length; j++) {
+                if (!g2Array[i][j].contains("G")) {
+                    //replace . with 0. here
+                }
+            }
+        }
         return testCode;
     }
 }
