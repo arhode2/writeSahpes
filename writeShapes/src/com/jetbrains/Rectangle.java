@@ -163,11 +163,17 @@ public class Rectangle extends Shape {
 
     /**
      * Function makes gCode 10x larger so it can be tested in CAMotics.
+     * <\p>
+     *     First breaks the input gCode into a 2D array of each individual command.
+     *     Next multiplies each X or Y shift by 10.
+     *     Reassembles the array into a single string, which it returns.
+     * </\p>
+     * Does not yet account for the coordinate change from general xyz to Ejet xyz.
      * @param inputFill the gCode that you want to test
      * @return an upscaled version of the gCode that can be seen in CAMotics
      */
     public String toTestCode(String inputFill) {
-        String testCode = "G91";
+        String testCode = "G91 \n";
         String[] gArray = inputFill.split("\n");
         String[][] g2Array = new String[gArray.length][];
         for (int i = 0; i < gArray.length; i++) {
@@ -175,10 +181,16 @@ public class Rectangle extends Shape {
         }
         for (int i = 0; i < g2Array.length; i++) {
             for (int j = 0; j < g2Array[i].length; j++) {
-                if (!g2Array[i][j].contains("G")) {
-                    //replace . with 0. here
+                if (g2Array[i][j].contains("X") || g2Array[i][j].contains("Y")) {
+                    g2Array[i][j] = g2Array[i][j].charAt(0) + (Double.toString(Double.parseDouble(g2Array[i][j].substring(1)) * 10));
                 }
             }
+        }
+        for (int i = 0; i < g2Array.length; i++) {
+            for (int j = 0; j < g2Array[i].length; j++) {
+                testCode = testCode.concat(g2Array[i][j] + " ");
+            }
+            testCode = testCode.concat("\n");
         }
         return testCode;
     }
