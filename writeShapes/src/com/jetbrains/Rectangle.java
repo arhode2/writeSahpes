@@ -22,6 +22,9 @@ public class Rectangle extends Shape {
         this.setSafeZ(newSafeZ);
     }
 
+    /**
+     * Horizontal dimmension of the rectangle.
+     */
     private double base;
     public double getBase() {
         return base;
@@ -30,6 +33,9 @@ public class Rectangle extends Shape {
         this.base = base;
     }
 
+    /**
+     * Vertical dimmension of the rectangle.
+     */
     private double height;
     public double getHeight() {
         return height;
@@ -39,10 +45,12 @@ public class Rectangle extends Shape {
     }
 
     /**
-     * A function that prints the gcode for a rectangle of the given parameters.
+     *  A function that prints the gcode for a rectangle of the given parameters.
      * Units must be in mm for Ejet.
      * Draws outline then draws smaller outlines until it reaches the center.
      * This function, and all of my fill functions will begin in the bottom left corner of the shape.
+     * Easy to write and understand, but doesn't print very nicely.
+     * @return the gCode for the rectangle
      */
     public String fillOutToIn() {
         String gCode = "";
@@ -60,6 +68,14 @@ public class Rectangle extends Shape {
         return gCode;
     }
 
+    /**
+     * Prints a rectangle.
+     * Starts in the bottom left, moves to the center, then prints larger concentric
+     * rectangles from the inside to outside.
+     * Overfills the first few inner rectangles boxes by trying to print sides smaller than
+     * the tip, but it seems worth it to preserve the side ratios.
+     * @return the gCode for a rectangle.
+     */
     public String fillInToOut() {
         String gCode = "";
         //I know it doesn't make sense to declare a base or height smaller than the tip width,
@@ -75,11 +91,16 @@ public class Rectangle extends Shape {
             nBase += (getBase() / getHeight()) * (2 * (getTip() * getTipScalar()));
             nHeight += 2 * (getTip() * getTipScalar());
         }
-        //I think the problem was having the ratio in both nBase and nHeight.
         gCode = cleanSpeeds(gCode);
         return gCode;
     }
 
+    /**
+     *
+     * Draws a rectangle by stacking horizontal lines on top of each other.
+     * Easy to generalize to any shape, but doesn't print nicely.
+     * @return the gCode for a rectangle.
+     */
     public String fillIntegral() {
         String gCode = "";
         double smallWidth = getBase() - (2 * (getTip() * getTipScalar()));
@@ -96,7 +117,10 @@ public class Rectangle extends Shape {
         gCode = cleanSpeeds(gCode);
         return gCode;
     }
-
+    /**
+     * First draws the outline, then fills with concentric rectangles from inside to outside.
+     * @return gCode for a rectangle.
+     */
     public String fillInkScape() {
         String gCode = "";
         gCode = drawBox(gCode, getBase(), getHeight());
@@ -105,6 +129,10 @@ public class Rectangle extends Shape {
         return gCode;
     }
 
+    /**
+     * moves the tip from the bottom left to the center of a rectangle.
+     * @return gCode to center the tip.
+     */
     public String center() {
         String centerCode = "";
         centerCode = centerCode.concat(moveRight(getBase() / 2));
@@ -138,6 +166,15 @@ public class Rectangle extends Shape {
         }
         return newgCode;
     }
+
+    /**
+     * draws a rectangle with the given parameters ho and vert.
+     * Adds that gCode to the input String of gCode
+     * @param inputgCode String to be added to.
+     * @param ho horizontal dimmension of the new rectangle.
+     * @param vert vertical dimmension of the new rectangle.
+     * @return the input gCode with the rectangle concatenated to the end.
+     */
     public String drawBox(String inputgCode, final double ho, final double vert) {
         inputgCode = inputgCode.concat(moveIn(getSafeZ()));
         inputgCode = inputgCode.concat(moveRight(ho));
@@ -146,19 +183,6 @@ public class Rectangle extends Shape {
         inputgCode = inputgCode.concat(moveDown(vert));
         inputgCode = inputgCode.concat(moveOut(getSafeZ()));
         return inputgCode;
-    }
-
-    public String drawArray(final int hoNum, final int vertNum, final double separation) {
-        String gCode = "";
-        for (int i = 0; i < vertNum; i++) {
-            for (int j = 0; j < hoNum; j++) {
-                 gCode = gCode.concat(fillInToOut());
-                 gCode = gCode.concat(moveRight(getBase() + separation));
-            }
-            gCode = gCode.concat(moveLeft(2 * (separation + getBase())));
-            gCode = gCode.concat(moveUp(separation));
-        }
-        return "";
     }
 
     /**

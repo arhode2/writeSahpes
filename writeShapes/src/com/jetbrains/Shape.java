@@ -1,11 +1,21 @@
 package com.jetbrains;
 
 public class Shape {
-    public static final String INITIALIZE = "PSOOUTPUT X Shape 0 1\n" +
-            "PSOShape X ON\n" +
+    /**
+     * Mandatory starting code for Ejet.
+     */
+    public static final String INITIALIZE = "PSOOUTPUT X CONTROL 0 1\n" +
+            "PSOCONTROL X ON\n" +
             "DWELL 0.01\n";
-    public static final String END = "PSOShape X OFF";
+    /**
+     * Mandatory finishing code for Ejet
+     */
+    public static final String END = "PSOCONTROL X OFF";
 
+
+    /**
+     * Ejet tip size you are going to print with
+     */
     private double tip;
     public double getTip() {
         return tip;
@@ -14,6 +24,13 @@ public class Shape {
         this.tip = tip;
     }
 
+    /**
+     * Determines how close one line is printed to the next.
+     * Increasing tipScalar increases the distance between lines.
+     * A tipScalar of 1 means that only the tip size controls how the lines are printed.
+     * A tip scalar of less than one is more likely to cause overlap.
+     * A scalar of greater than one is more likely to leave empty spaces.
+     */
     private double tipScalar;
     public double getTipScalar() {
         return tipScalar;
@@ -23,7 +40,9 @@ public class Shape {
     }
 
 
-
+    /**
+     * Speed at which you print horizontally and vertically.
+     */
     private double speed;
     public double getSpeed() {
         return speed;
@@ -32,6 +51,9 @@ public class Shape {
         this.speed = speed;
     }
 
+    /**
+     * Speed at which you raise and lower the tip.
+     */
     private double zSpeed;
     public double getzSpeed() {
         return zSpeed;
@@ -40,6 +62,9 @@ public class Shape {
         this.zSpeed = zSpeed;
     }
 
+    /**
+     * The distance away from printing distance at which ink will not flow.
+     */
     private double safeZ;
     public double getSafeZ() {
         return safeZ;
@@ -70,5 +95,25 @@ public class Shape {
     }
     public String moveDown(final double distance) {
         return "G01 X" + String.format("%.6f", distance) + " F" + String.format("%.6f", getSpeed()) + "\n";
+    }
+    public String moveUpLeft(final double distanceHo, final double distanceVert) {
+        return "G01 X-" + String.format("%.6f", distanceVert)
+                + " Y-" + String.format("%.6f", distanceHo)
+                + " F" + String.format("%.6f", getSpeed()) + "\n";
+    }
+    public String moveUpRight(final double distanceHo, final double distanceVert) {
+        return "G01 X-" + String.format("%.6f", distanceVert)
+                + " Y" + String.format("%.6f", distanceHo)
+                + " F" + String.format("%.6f", getSpeed()) + "\n";
+    }
+    public String moveDownLeft(final double distanceHo, final double distanceVert) {
+        return "G01 X" + String.format("%.6f", distanceVert)
+                + " Y-" + String.format("%.6f", distanceHo)
+                + " F" + String.format("%.6f", getSpeed()) + "\n";
+    }
+    public String moveDownRight(final double distanceHo, final double distanceVert) {
+        return "G01 X" + String.format("%.6f", distanceVert)
+                + " Y" + String.format("%.6f", distanceHo)
+                + " F" + String.format("%.6f", getSpeed()) + "\n";
     }
 }
