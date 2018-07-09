@@ -1,5 +1,8 @@
 package com.jetbrains;
 
+/**
+ * Variables and methods used by any Ejet project.
+ */
 public class Shape {
     /**
      * Mandatory starting code for Ejet.

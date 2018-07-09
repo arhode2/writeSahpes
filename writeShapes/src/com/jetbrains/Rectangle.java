@@ -1,5 +1,8 @@
 package com.jetbrains;
 
+/**
+ * Hopefully you don't need me to tell you what a rectangle is.
+ */
 public class Rectangle extends Shape {
     /**
      * Total constructor for a rectangle
@@ -23,7 +26,7 @@ public class Rectangle extends Shape {
     }
 
     /**
-     * Horizontal dimmension of the rectangle.
+     * Horizontal dimension of the rectangle.
      */
     private double base;
     public double getBase() {
@@ -34,7 +37,7 @@ public class Rectangle extends Shape {
     }
 
     /**
-     * Vertical dimmension of the rectangle.
+     * Vertical dimension of the rectangle.
      */
     private double height;
     public double getHeight() {
@@ -171,8 +174,8 @@ public class Rectangle extends Shape {
      * draws a rectangle with the given parameters ho and vert.
      * Adds that gCode to the input String of gCode
      * @param inputgCode String to be added to.
-     * @param ho horizontal dimmension of the new rectangle.
-     * @param vert vertical dimmension of the new rectangle.
+     * @param ho horizontal dimension of the new rectangle.
+     * @param vert vertical dimension of the new rectangle.
      * @return the input gCode with the rectangle concatenated to the end.
      */
     public String drawBox(String inputgCode, final double ho, final double vert) {
@@ -191,7 +194,7 @@ public class Rectangle extends Shape {
      *     First breaks the input gCode into a 2D array of each individual command.
      *     Next multiplies each X or Y shift by 10.
      *     Reassembles the array into a single string, which it returns.
-     * </\p>
+     * </p>
      * Does not yet account for the coordinate change from general xyz to Ejet xyz.
      * @param inputFill the gCode that you want to test
      * @return an upscaled version of the gCode that can be seen in CAMotics
