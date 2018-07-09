@@ -6,6 +6,7 @@ package com.jetbrains;
 public class Rectangle extends Shape {
     /**
      * Total constructor for a rectangle
+     * Test comment line.
      * @param newBase horizontal dimension
      * @param newHeight vertical dimension
      * @param newTip tip diameter
