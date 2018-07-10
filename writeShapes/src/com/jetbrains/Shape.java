@@ -1,5 +1,8 @@
 package com.jetbrains;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
 /**
  * Variables and methods used by any Ejet project.
  */
@@ -118,5 +121,16 @@ public class Shape {
         return "G01 X" + String.format("%.6f", distanceVert)
                 + " Y" + String.format("%.6f", distanceHo)
                 + " F" + String.format("%.6f", getSpeed()) + "\n";
+    }
+
+    public static void toFile(String inputCode, String fileName) {
+        try {
+            PrintWriter outputStream = new PrintWriter(fileName);
+            outputStream.println(inputCode);
+            outputStream.close();
+            System.out.println("Written to file");
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
     }
 }
