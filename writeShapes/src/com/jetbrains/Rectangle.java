@@ -4,6 +4,18 @@ package com.jetbrains;
  * Hopefully you don't need me to tell you what a rectangle is.
  */
 public class Rectangle extends Shape {
+    @Override
+    public String toString() {
+        return "B " + Double.toString(this.getBase())
+                + "H " + Double.toString(this.getHeight())
+                + "tip " +  Double.toString(this.getTip())
+                + "TS " + Double.toString(this.getTipScalar())
+                + "spd " + Double.toString(this.getSpeed())
+                + "Zspd "
+                + Double.toString(this.getzSpeed())
+                + "z " + Double.toString(this.getSafeZ());
+    }
+
     /**
      * Total constructor for a rectangle
      * Test comment line.
